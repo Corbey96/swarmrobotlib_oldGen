@@ -67,7 +67,7 @@ class SwarmRobot:
     def stop_all(self):
         self._drive_motor.stop()
         self._steer_motor.stop()
-        cv2.destroyAllWindows()
+        #cv2.destroyAllWindows()
 
     def _setup_autopilot(self):
         from time import sleep
@@ -80,16 +80,16 @@ class SwarmRobot:
 
                     if self._track_active:
                         _,frame = self._camera.read()
-                        if not frame is None:
-                            cv2.imshow('ultimativer Frame', frame)
+                        if frame is not None:
+                            #cv2.imshow('ultimativer Frame', frame)
                             if cv2.waitKey(1) == ord("q"):
                                 break
                             pos = self._line_tracker.track_line(frame, event)
                             if pos != None:
                                 steer = self._pid_controller.pid(pos)
                                 self.set_drive_steer(steer)
-                            else:
-                                print('[!] no frame available')
+                        else:
+                            print('[!] no frame available')
             except KeyboardInterrupt:
                 self.stop_all()
                 # cv2.destroyAllWindows() - noch erforderlich?
@@ -155,23 +155,23 @@ class SwarmRobot:
                     else:
                         # capture frames from the camera
                         _, frame = self._camera.read()
-                        draw_image = frame.copy()
                         if frame is not None:
-                            signs = SignDetector.detect_traffic_sign(frame)
+                            draw_image = frame.copy()
+                            signs = self._sign_detector.detect_traffic_sign(frame)
                             if signs is not None:
                                 print("Detected traffic signs ", end="")
                                 # show images in camera stream
                                 for sign_name, sign_pos, sign_distance in signs:
                                     print(sign_name, end="\n")
-                                    draw_image = SignDetector.label_image(draw_image, sign_name, sign_pos, sign_distance)
-                                    cv2.imshow("The world through olfas eye", draw_image)
+                                    draw_image = self._sign_detector.label_image(draw_image, sign_name, sign_pos, sign_distance)
+                                    #cv2.imshow("The world through olfas eye", draw_image)
 
-                                SignReactor.react_to_sign(signs, event)
+                                self._sign_reactor.react_to_sign(signs, event)
 
                             if self._do_save_detection:
                                 cv2.imwrite("sign_detection_pictures/traffic_sign_detection_" + str(time.time()) + ".jpg", draw_image)
                         else:
-                            print("I hob köi Bild")
+                            print("------------ I hob köi Bild ------------")
 
                         if cv2.waitKey(1) == ord("q"):
                             print("stopping program...")
@@ -179,9 +179,13 @@ class SwarmRobot:
                             sys.exit("stop program successfully")
 
             except KeyboardInterrupt:
+                print("stopping program...")
                 self.stop_all()
+                sys.exit("stop program successfully")
             finally:
+                print("stopping program...")
                 self.stop_all()
+                sys.exit("stop program successfully")
 
         self._track_process = Thread(group=None, target=detect, daemon=True, args=(self._event,))
         self._track_process.start()

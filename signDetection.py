@@ -32,15 +32,15 @@ class SignDetector:
         :return Distance(float) : distance Estimated
         """
         distance = (real_object_width * focal_length) / object_width_in_frame
-        print("real_object_width", real_object_width)
-        print("focal_length", focal_length)
-        print("object_width_in_frame", object_width_in_frame)
+        # print("real_object_width", real_object_width)
+        # print("focal_length", focal_length)
+        # print("object_width_in_frame", object_width_in_frame)
         return distance
 
     def extract_sign_width_in_frame(self, detected_sign):
         for (x, y, h, w) in detected_sign:
             sign_width_in_frame = w  # get sign width of sign in frame
-            print("sign_width_in_frame", sign_width_in_frame)
+            # print("sign_width_in_frame", sign_width_in_frame)
         return sign_width_in_frame
 
     def detect(self, image, cascade: str):
@@ -81,7 +81,7 @@ class SignDetector:
         stop_focal_length_found = self.focal_length(stop_known_distance,
                                                     stop_known_width,
                                                     stop_ref_sign_width)
-        print("stop_focal_length_found: ", stop_focal_length_found)
+        # print("stop_focal_length_found: ", stop_focal_length_found)
         distance_vars["stop_cascade_classifier"] = stop_cascade_classifier
         distance_vars["stop_known_width"] = stop_known_width
         distance_vars["stop_focal_length_found"] = stop_focal_length_found
@@ -97,7 +97,7 @@ class SignDetector:
         no_entry_focal_length_found = self.focal_length(no_entry_known_distance,
                                                         no_entry_known_width,
                                                         no_entry_ref_sign_width)
-        print("no_entry_focal_length_found: ", no_entry_focal_length_found)
+        # print("no_entry_focal_length_found: ", no_entry_focal_length_found)
         distance_vars["no_entry_cascade_classifier"] = no_entry_cascade_classifier
         distance_vars["no_entry_known_width"] = no_entry_known_width
         distance_vars["no_entry_focal_length_found"] = no_entry_focal_length_found
