@@ -2,8 +2,10 @@ from motor import CalibratedMotor, Motor
 from pidcontroller import PIDController
 from line_tracking import LineTracker
 from navigation import Navigator
-from signDetection import SignDetection
+from signDetection import SignDetector
+from sign_reaction import SignReactor
 from threading import Thread, Event
+import sys
 import cv2
 
 class SwarmRobot:
@@ -15,12 +17,12 @@ class SwarmRobot:
 
         # Camera
         self._camera = cv2.VideoCapture(0)
-        
+
         self._event = Event()
-        
+
         self._goal = 1
 
-        # Linetracking
+        # Line tracking
         self._track_process = None
         self._track_active = False
         self._pid_controller = PIDController(verbose=False)
@@ -30,7 +32,15 @@ class SwarmRobot:
         self._navigation_process = None
         self._navigation_active = False
         self._navigator = Navigator(self._camera.get(cv2.CAP_PROP_FRAME_WIDTH), self._camera.get(cv2.CAP_PROP_FRAME_HEIGHT), self, preview=True, debug=False)
-        
+
+        # sign detection
+        self._sign_detection_process = None
+        self._sign_detection_active = False
+        self._do_save_detection = False
+        self._sign_detector = SignDetector()
+
+        self._sign_reactor = SignReactor(self)
+
     def __del__(self):
         self._steer_motor.to_init_position()
         self.stop_all()
@@ -102,16 +112,16 @@ class SwarmRobot:
 
     def _setup_classifier(self):
         from .classifier import Classifier
-        
+
     def _setup_navigation(self):
         from time import sleep
-        
+
         def navigate(event):
             try:
                 while True:
                     if not self._navigation_active:
                         sleep(5)
-                        
+
                     if self._navigation_active:
                         _,frame = self._camera.read()
                         if not frame is None:
@@ -120,47 +130,63 @@ class SwarmRobot:
                 self.stop_all()
             finally:
                 self.stop_all()
-        
+
         self._navigation_process = Thread(group=None, target=navigate, daemon=True, args=(self._event,))
         self._navigation_process.start()
-    
+
     def set_navigaton_state(self, active:bool):
         self._navigation_active = active
         if(active and self._navigation_process == None):
             self._setup_navigation()
-            
-            
+
     #def set_goal(self, ):
     #    self.
 
     def _setup_sign_detection(self):
-        signDetection = SignDetection()
-        distance_vars = signDetection.init_distance_to_signs()
+        import time
+        from time import sleep
 
-        def detect():
+        def detect(event):
             try:
                 while True:
-                    # capture frames from the camera
-                    _, frame = self._camera.read()
-                    draw_image = frame.copy()
-                    if not frame is None:
-                        signs = signDetection.detect_traffic_sign(frame, distance_vars)
-                        if signs is not None:
-                            print("Detected traffic signs ", end="")
-                            for sign_name, sign_pos, sign_distance in signs:
-                                print(sign_name, end="\n")
-                                draw_image = signDetection.label_image(draw_image, sign_name, sign_pos, sign_distance)
-                                cv2.imshow("The world through olfas eye", draw_image)
-                    else:
-                        print("I hob köi Bild")
+                    if not self._sign_detection_active:
+                        sleep(5)
 
-                    if cv2.waitKey(1) == ord("q"):
-                        print("irgendwas")
+                    else:
+                        # capture frames from the camera
+                        _, frame = self._camera.read()
+                        draw_image = frame.copy()
+                        if frame is not None:
+                            signs = SignDetector.detect_traffic_sign(frame)
+                            if signs is not None:
+                                print("Detected traffic signs ", end="")
+                                # show images in camera stream
+                                for sign_name, sign_pos, sign_distance in signs:
+                                    print(sign_name, end="\n")
+                                    draw_image = SignDetector.label_image(draw_image, sign_name, sign_pos, sign_distance)
+                                    cv2.imshow("The world through olfas eye", draw_image)
+
+                                SignReactor.react_to_sign(signs, event)
+
+                            if self._do_save_detection:
+                                cv2.imwrite("sign_detection_pictures/traffic_sign_detection_" + str(time.time()) + ".jpg", draw_image)
+                        else:
+                            print("I hob köi Bild")
+
+                        if cv2.waitKey(1) == ord("q"):
+                            print("stopping program...")
+                            self.stop_all()
+                            sys.exit("stop program successfully")
 
             except KeyboardInterrupt:
                 self.stop_all()
             finally:
                 self.stop_all()
 
-        self._track_process = Thread(group=None, target=detect, daemon=True)
+        self._track_process = Thread(group=None, target=detect, daemon=True, args=(self._event,))
         self._track_process.start()
+
+    def set_sign_detection_state(self, active: bool):
+        self._sign_detection_active = active
+        if active and self._sign_detection_process is None:
+            self._setup_sign_detection()

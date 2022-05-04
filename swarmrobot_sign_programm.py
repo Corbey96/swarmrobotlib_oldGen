@@ -7,16 +7,19 @@ def main():
     # calibrate bot
     bot.calibrate(False, True)
     # setup automatic lineDetection 
-    # fo bot.set_autopilot_state(active = True)
-    # fo bot._setup_autopilot()     
-    # fo bot.change_drive_power(23)
-    
-    # setup sign detection
-    bot._setup_sign_detection()
-    
-    sleep(15)
+    bot.set_autopilot_state(active=True)
+    bot._setup_autopilot()
+
+    # activate sign detection
+    bot.set_sign_detection_state(active=True)
+
+    # set velocity of bot
+    bot.change_drive_power(23)
+
+    sleep(25)
     bot.stop_all()
     sys.exit("Erfolgreich beendet!")
-    
+
+
 if __name__=='__main__':
     main()

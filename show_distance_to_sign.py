@@ -1,4 +1,4 @@
-from signDetection import SignDetection
+from signDetection import SignDetector
 from swarmrobot import SwarmRobot
 
 from time import sleep
@@ -11,7 +11,7 @@ def main():
     # calibrate bot
     bot.calibrate(False, True)
     
-    signDetection = SignDetection()
+    signDetection = SignDetector()
     
     # init for sign detection
     distance_vars = signDetection.init_distance_to_signs()

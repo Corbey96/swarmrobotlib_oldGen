@@ -1,8 +1,11 @@
 import cv2
-import time
 
 
-class SignDetection:
+class SignDetector:
+    def __init__(self):
+        # init distance vars
+        self.distance_vars = self.init_distance_to_signs()
+
     """
     Control instance for sign detection with distance measurement.
     """
@@ -102,7 +105,7 @@ class SignDetection:
         return distance_vars
         
 
-    def detect_traffic_sign(self, image, distance_vars):
+    def detect_traffic_sign(self, image):
         """
         Find stop signs, speed signs and no entry signs.
 
@@ -116,11 +119,11 @@ class SignDetection:
 
         signs = []
         # Detect stop sign in image
-        for (x, y, w, h) in self.detect(image, distance_vars.get("stop_cascade_classifier")):
+        for (x, y, w, h) in self.detect(image, self.distance_vars.get("stop_cascade_classifier")):
             stop_sign_width_in_frame = w
             if stop_sign_width_in_frame != 0:
-                distance = self.distance_finder(distance_vars.get("stop_focal_length_found"),
-                                                distance_vars.get("stop_known_width"),
+                distance = self.distance_finder(self.distance_vars.get("stop_focal_length_found"),
+                                                self.distance_vars.get("stop_known_width"),
                                                 stop_sign_width_in_frame)
                 # make distance to int cause accuracy without decimals is enough
                 int_distance = int(distance)
@@ -130,20 +133,13 @@ class SignDetection:
             else:
                 signs.append(("sign stop | distance UNKNOWN", (x, y, w, h), 0))
 
-        # Detect speed sign in image
-        #for (x, y, w, h) in self.detect(image, 'classifiers/speed_sign.xml'):
-        #    speed = self.detect_speed_sign_speed(image[int(y):int(y + h), int(x):int(x + w)])
-        #    if speed is not None:
-        #        signs.append(("sign speed " + str(speed), (x, y, w, h)))
-        #    else:
-        #        signs.append(("sign speed UNKNOWN", (x, y, w, h)))
         # Detect no entry sign in image
         for (x, y, w, h) in self.detect(image,
-                                        distance_vars.get("no_entry_cascade_classifier")):
+                                        self.distance_vars.get("no_entry_cascade_classifier")):
             no_entry_sign_width_in_frame = w
             if no_entry_sign_width_in_frame != 0:
-                distance = self.distance_finder(distance_vars.get("no_entry_focal_length_found"),
-                                                distance_vars.get("no_entry_known_width"),
+                distance = self.distance_finder(self.distance_vars.get("no_entry_focal_length_found"),
+                                                self.distance_vars.get("no_entry_known_width"),
                                                 no_entry_sign_width_in_frame)
                 # make distance to int cause accuracy without decimals is enough
                 int_distance = int(distance)
@@ -154,20 +150,6 @@ class SignDetection:
                 signs.append(("sign no entry | distance UNKNOWN", (x, y, w, h), 0))
         if signs:  # not empty?
             return signs
-        return None
-
-    def detect_speed_sign_speed(self, image):
-        """
-        use more classifiers to detect numbers within the given image
-        if the performance is not important this could be swapped for pytesseract
-        """
-        classifier_of_speed = {30: "classifiers/speed_30_sign.xml",
-                               50: "classifiers/speed_50_sign.xml",
-                               70: "classifiers/speed_70_sign.xml",
-                               100: "classifiers/speed_100_sign.xml"}
-        for speed, classifier in classifier_of_speed.items():
-            if self.detect(image, classifier) is not None:
-                return speed
         return None
     
     def label_image(self, image, name, detection, distance):
