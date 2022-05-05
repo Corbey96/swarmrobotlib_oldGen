@@ -11,12 +11,12 @@ def main():
     bot._setup_autopilot()
 
     # activate sign detection
-    bot.set_sign_detection_state(active=True)
+    bot.set_sign_detection_state(active=True, show_only=False)
 
     # set velocity of bot
-    bot.change_drive_power(23)
+    bot.change_drive_power(28)
 
-    sleep(22)
+    sleep(60)
     bot.stop_all()
     sys.exit("Erfolgreich beendet!")
 

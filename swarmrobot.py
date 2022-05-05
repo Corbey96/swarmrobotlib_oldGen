@@ -37,6 +37,7 @@ class SwarmRobot:
         self._sign_detection_process = None
         self._sign_detection_active = False
         self._do_save_detection = False
+        self._show_only = False
         self._sign_detector = SignDetector()
 
         self._sign_reactor = SignReactor(self)
@@ -165,9 +166,12 @@ class SwarmRobot:
                                     print(sign_name, end="\n")
                                     draw_image = self._sign_detector.label_image(draw_image, sign_name, sign_pos, sign_distance)
                                     #cv2.imshow("The world through olfas eye", draw_image)
-
-                                self._sign_reactor.react_to_sign(signs, event)
-
+                                
+                                if self._show_only:
+                                    cv2.imshow("The world through olfas eye", draw_image)
+                                else:
+                                    self._sign_reactor.react_to_sign(signs, event)
+                                
                             if self._do_save_detection:
                                 cv2.imwrite("sign_detection_pictures/traffic_sign_detection_" + str(time.time()) + ".jpg", draw_image)
                         else:
@@ -190,7 +194,8 @@ class SwarmRobot:
         self._track_process = Thread(group=None, target=detect, daemon=True, args=(self._event,))
         self._track_process.start()
 
-    def set_sign_detection_state(self, active: bool):
+    def set_sign_detection_state(self, active: bool, show_only: bool):
         self._sign_detection_active = active
+        self._show_only = show_only
         if active and self._sign_detection_process is None:
             self._setup_sign_detection()
