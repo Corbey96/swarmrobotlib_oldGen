@@ -160,11 +160,11 @@ class SignDetector:
             endX = int(x + w)
             endY = int(y + h)
             thickness = 2
-            image = cv2.rectangle(image, (startX, startY), (endX, endY), thickness)
+            color = (0,255,0)
+            image = cv2.rectangle(image, (startX, startY), (endX, endY), color, thickness)
             font = cv2.FONT_HERSHEY_SIMPLEX
             fontScale = 0.75
-            color = (0,255,0)
-            cv2.putText(image, name, (startX, startY), font, fontScale, color, thickness, cv2.LINE_AA)
-            cv2.putText(image, f"distance = {round(distance,2)} cm", (startX, startY-15), font, fontScale, color, 2)
+            cv2.putText(image, name, (startX, startY-5), font, fontScale, color, thickness, cv2.LINE_AA)
+            cv2.putText(image, f"distance = {round(distance,2)} cm", (startX, startY-20), font, fontScale, color, 2)
             
         return image

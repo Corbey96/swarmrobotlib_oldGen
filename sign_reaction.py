@@ -11,7 +11,7 @@ class SignReactor:
 
         # initial time setup to prevent reaction on same sign over and over again
         self.last_stop_time = datetime(2022, 1, 1, 22, 22, 22)
-        self.speed = 23
+        self.speed = 28
         self.is_busy = False
 
     def react_to_sign(self, signs, event):
@@ -42,8 +42,8 @@ class SignReactor:
                         self.bot.change_drive_power(self.speed)
 
                         self.is_busy = False
-                        print ("nimmer so gefragt: " + str(self.is_busy))
-                        print("-------------- fertig mit Stopp ----------------------------")
+                        # print("nimmer so gefragt: " + str(self.is_busy))
+                        # print("-------------- fertig mit Stopp ----------------------------")
                     else:
                         print(str(datetime.now()) + " | too short time interval to last stop sign detection")
                 else:

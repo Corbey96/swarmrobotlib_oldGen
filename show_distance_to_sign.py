@@ -12,7 +12,7 @@ def main():
     bot.calibrate(False, True)
     
     # activate sign detection
-    bot.set_sign_detection_state(active=True, show_only=True)
+    bot.set_sign_detection_state(active=True, show_only=True, drive_and_show=False)
     
     sleep(60)
     

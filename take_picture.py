@@ -6,7 +6,7 @@ def main():
     bot = SwarmRobot()
     # calibrate bot
     bot.calibrate(False, True)
-    take_picture(bot, '/home/pi/swarmrobot_old_generation/swarmrobotlib_oldGen/reference_pictures/no_entry_30_sr14.png')
+    take_picture(bot, '/home/pi/swarmrobot_old_generation/swarmrobotlib_oldGen/reference_pictures/no_entry_30_floor.png')
 
     
 def take_picture(bot, pic_path):

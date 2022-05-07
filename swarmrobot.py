@@ -38,6 +38,7 @@ class SwarmRobot:
         self._sign_detection_active = False
         self._do_save_detection = False
         self._show_only = False
+        self._drive_and_show = False
         self._sign_detector = SignDetector()
 
         self._sign_reactor = SignReactor(self)
@@ -82,7 +83,8 @@ class SwarmRobot:
                     if self._track_active:
                         _,frame = self._camera.read()
                         if frame is not None:
-                            #cv2.imshow('ultimativer Frame', frame)
+                            # uncomment to show current camara frame
+                            # cv2.imshow('frame | line tracking', frame)
                             if cv2.waitKey(1) == ord("q"):
                                 break
                             pos = self._line_tracker.track_line(frame, event)
@@ -159,23 +161,27 @@ class SwarmRobot:
                         if frame is not None:
                             draw_image = frame.copy()
                             signs = self._sign_detector.detect_traffic_sign(frame)
+                            
                             if signs is not None:
                                 print("Detected traffic signs ", end="")
                                 # show images in camera stream
                                 for sign_name, sign_pos, sign_distance in signs:
                                     print(sign_name, end="\n")
                                     draw_image = self._sign_detector.label_image(draw_image, sign_name, sign_pos, sign_distance)
-                                    #cv2.imshow("The world through olfas eye", draw_image)
+                                    if self._show_only or self._drive_and_show:
+                                        cv2.imshow("frame", draw_image)
                                 
-                                if self._show_only:
-                                    cv2.imshow("The world through olfas eye", draw_image)
-                                else:
+                                if not self._show_only:
                                     self._sign_reactor.react_to_sign(signs, event)
+                                
+                            # show video stream - eventually performance little lower thats why
+                            if self._show_only or self._drive_and_show:
+                                cv2.imshow("frame", draw_image)
                                 
                             if self._do_save_detection:
                                 cv2.imwrite("sign_detection_pictures/traffic_sign_detection_" + str(time.time()) + ".jpg", draw_image)
                         else:
-                            print("------------ I hob köi Bild ------------")
+                            # print("------------ no picture ------------")
 
                         if cv2.waitKey(1) == ord("q"):
                             print("stopping program...")
@@ -194,8 +200,9 @@ class SwarmRobot:
         self._track_process = Thread(group=None, target=detect, daemon=True, args=(self._event,))
         self._track_process.start()
 
-    def set_sign_detection_state(self, active: bool, show_only: bool):
+    def set_sign_detection_state(self, active: bool, show_only: bool, drive_and_show: bool):
         self._sign_detection_active = active
         self._show_only = show_only
+        self._drive_and_show = drive_and_show
         if active and self._sign_detection_process is None:
             self._setup_sign_detection()
