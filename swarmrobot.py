@@ -180,7 +180,7 @@ class SwarmRobot:
                                 
                             if self._do_save_detection:
                                 cv2.imwrite("sign_detection_pictures/traffic_sign_detection_" + str(time.time()) + ".jpg", draw_image)
-                        else:
+                        # else:
                             # print("------------ no picture ------------")
 
                         if cv2.waitKey(1) == ord("q"):

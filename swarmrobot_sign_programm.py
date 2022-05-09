@@ -16,7 +16,7 @@ def main():
     # set velocity of bot
     bot.change_drive_power(28)
 
-    sleep(20)
+    sleep(55)
     bot.stop_all()
     sys.exit("Erfolgreich beendet!")
 
