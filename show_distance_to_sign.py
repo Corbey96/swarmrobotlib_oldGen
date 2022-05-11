@@ -1,10 +1,9 @@
-from signDetection import SignDetector
-from swarmrobot import SwarmRobot
+from swarmrobot.swarmrobot import SwarmRobot
 
 from time import sleep
 import cv2
-import numpy as np
 import sys
+
 
 def main():
     bot = SwarmRobot()
@@ -20,5 +19,5 @@ def main():
     sys.exit("Erfolgreich beendet!")
     
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()

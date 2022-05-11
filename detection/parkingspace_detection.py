@@ -1,14 +1,14 @@
 import cv2
 import numpy as np
 
+
 class ParkingSpaceDetection:
         
     def detect_red_line(self, img):
         # threshold on red color
-        lowcolor = (0,36,235)#(0,0,75)
-        highcolor = (67,112,255)#(50,50,135)
+        lowcolor = (0, 36, 235)
+        highcolor = (67, 112, 255)
         thresh = cv2.inRange(img, lowcolor, highcolor)
-
 
         # apply morphology close
         kernel = np.ones((5,5), np.uint8)

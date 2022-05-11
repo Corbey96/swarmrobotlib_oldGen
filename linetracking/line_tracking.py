@@ -1,6 +1,6 @@
 import cv2 as cv
-import numpy as numpy
 import time
+
 
 class LineTracker:
     def __init__(self, width, height, method='contour', kernel_size=(5,5), preview=False, debug=False):
@@ -38,8 +38,8 @@ class LineTracker:
                 cv.imshow('Blur', blur)
 
             # Color thresholding
-            #thresh = cv.adaptiveThreshold(blur ,255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY_INV,11,2)
-            rel, thresh = cv.threshold(blur,60,255,cv.THRESH_BINARY_INV)
+            # thresh = cv.adaptiveThreshold(blur ,255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY_INV,11,2)
+            rel, thresh = cv.threshold(blur, 60, 255, cv.THRESH_BINARY_INV)
             if self.debug:
                 cv.imshow('Thresh', thresh)
 
@@ -58,8 +58,8 @@ class LineTracker:
                 cy = int(M['m01']/M['m00'])
 
                 if self.preview:
-                    cv.line(frame,(cx,0),(cx,720),(255,0,0),1)
-                    cv.line(frame,(0,cy),(1280,cy),(255,0,0),1)
+                    cv.line(frame, (cx, 0), (cx, 720), (255, 0, 0), 1)
+                    cv.line(frame, (0, cy), (1280, cy), (255, 0, 0), 1)
 
                     cv.drawContours(frame, contours, -1, (0,255,0), 1)
 
@@ -67,7 +67,7 @@ class LineTracker:
                     
                 # If robot leaves line, set back and try again
                 width_thres = frame.shape[1]/10
-                if cx<width_thres or cx>(frame.shape[1]-width_thres):
+                if cx < width_thres or cx > (frame.shape[1]-width_thres):
                     self.set_back(bot)
                     bot.change_drive_power(bot.power_lvl)
                 

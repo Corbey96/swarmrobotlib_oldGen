@@ -1,6 +1,7 @@
-from swarmrobot import SwarmRobot
+from swarmrobot.swarmrobot import SwarmRobot
 from time import sleep
 import sys
+
 
 def main():
     bot = SwarmRobot()
@@ -8,7 +9,6 @@ def main():
     bot.calibrate(False, True)
     # setup automatic lineDetection 
     bot.set_autopilot_state(active=True)
-    bot._setup_autopilot()
 
     # activate sign detection
     bot.set_sign_detection_state(active=True, show_only=False, drive_and_show=False)
@@ -21,5 +21,5 @@ def main():
     sys.exit("Erfolgreich beendet!")
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()

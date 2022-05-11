@@ -1,4 +1,4 @@
-import math
+
 
 class PIDController:
     # PID constants
@@ -12,7 +12,7 @@ class PIDController:
 
     centerpoint = 0
 
-    def __init__(self, verbose = False):
+    def __init__(self, verbose=False):
         self._verbose = verbose
 
     def pid(self, value: int) -> float:

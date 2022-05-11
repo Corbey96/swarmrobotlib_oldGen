@@ -43,7 +43,7 @@ class IntersectionDetection:
             segmented[labels[i]].append(line)
 
         segmented = list(segmented.values())
-        #print("Segmented lines into two groups: %d, %d" % (len(segmented[0]), len(segmented[1])))
+        # print("Segmented lines into two groups: %d, %d" % (len(segmented[0]), len(segmented[1])))
 
         return segmented
 
@@ -99,7 +99,6 @@ class IntersectionDetection:
     #             cv2.line(img, (x1, y1), (x2, y2), color, 1)
 
     def detect_intersection(self, img):
-
         height, width, _ = img.shape
         height_crop = int(height / 4)
         width_crop = int(width / 4)
@@ -118,8 +117,6 @@ class IntersectionDetection:
         adapt_type = cv2.ADAPTIVE_THRESH_GAUSSIAN_C
         thresh_type = cv2.THRESH_BINARY_INV
         bin_img = cv2.adaptiveThreshold(blur, 255, adapt_type, thresh_type, 11, 2)
-        #cv2.imshow("binary", bin_img)
-        #cv2.waitKey()
 
         # Detect lines
         rho = 2
@@ -127,7 +124,7 @@ class IntersectionDetection:
         thresh = 350
         lines = cv2.HoughLines(bin_img, rho, theta, thresh)
 
-        #print("Found lines: %d" % (len(lines)))
+        # print("Found lines: %d" % (len(lines)))
         intersections = []
         if lines is not None:
         # Cluster line angles into 2 groups (vertical and horizontal)

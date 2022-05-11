@@ -22,7 +22,7 @@ def main():
     
     #qrdetect = QrDetection()
     
-    #ta = Turn_Assistant(bot)
+    #ta = TurnAssistant(bot)
     #ta.turn_90_deg(1)
     #ta.turn_180_deg_on_spot()
     

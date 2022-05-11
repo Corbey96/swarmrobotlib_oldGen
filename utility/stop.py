@@ -1,4 +1,4 @@
-from swarmrobot import SwarmRobot
+from swarmrobot.swarmrobot import SwarmRobot
 
 # checks if the motors are coupled up correctly
 

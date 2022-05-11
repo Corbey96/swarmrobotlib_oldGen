@@ -1,13 +1,13 @@
 import time
 from datetime import datetime, timedelta
 
-from turn_assistant import Turn_Assistant
+from navigation.turnassistant import TurnAssistant
 
 
 class SignReactor:
     def __init__(self, bot):
         self.bot = bot
-        self.ta = Turn_Assistant(bot)
+        self.ta = TurnAssistant(bot)
 
         # initial time setup to prevent reaction on same sign over and over again
         self.last_stop_time = datetime(2022, 1, 1, 22, 22, 22)
@@ -42,8 +42,7 @@ class SignReactor:
                         self.bot.change_drive_power(self.speed)
 
                         self.is_busy = False
-                        # print("nimmer so gefragt: " + str(self.is_busy))
-                        # print("-------------- fertig mit Stopp ----------------------------")
+
                     else:
                         print(str(datetime.now()) + " | too short time interval to last stop sign detection")
                 else:

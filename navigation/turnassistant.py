@@ -1,15 +1,13 @@
-from motor import Motor
-import threading
-
 import time
 
-class Turn_Assistant:
+
+class TurnAssistant:
     def __init__(self, bot):
         self._bot = bot
         
         self._full_rotation_deg = 510
         
-    #direction 1 = links -1 = rechts
+    # direction 1 = links -1 = rechts
     def turn_90_deg(self, direction):
         time.sleep(0.5)
         self._bot.set_drive_steer(-1.0*direction)

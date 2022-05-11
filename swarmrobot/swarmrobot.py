@@ -1,10 +1,11 @@
-from motor import CalibratedMotor, Motor
-from pidcontroller import PIDController
-from line_tracking import LineTracker
-from navigation import Navigator
-from intersectionDetectionThreading import IntersectionDetection
+from utility.motor import CalibratedMotor, Motor
+from linetracking.pidcontroller import PIDController
+from linetracking.line_tracking import LineTracker
+from navigation.navigation import Navigator
+from detection.intersection_detection_threading import IntersectionDetection
 from threading import Thread, Event
 import cv2
+
 
 class SwarmRobot:
     def __init__(self):
@@ -58,11 +59,11 @@ class SwarmRobot:
     def calibrate(self, calibrate_forklift=False, verbose=False):
         print('Calibrating steering')
         self._steer_motor.calibrate(verbose)
-        if(calibrate_forklift):
+        if calibrate_forklift:
             print('Calibrating forklift lift motor')
             self._fork_lift_motor.calibrate(verbose)
             print('Calibrating forklift tilt motor')
-            self._fork_tilt_motor.calibrate_offset(53000,verbose)
+            self._fork_tilt_motor.calibrate_offset(53000, verbose)
 
     def stop_all(self):
         self._drive_motor.stop()
@@ -78,11 +79,11 @@ class SwarmRobot:
                         sleep(0.5)
 
                     if self._track_active:
-                        _,frame = self._camera.read()
-                        if not frame is None:
+                        _, frame = self._camera.read()
+                        if frame is not None:
                             pos = self._line_tracker.track_line(frame, event, self)
                             self.last_line_tracking = pos
-                            if pos != None:
+                            if pos is not None:
                                 self.steer = self._pid_controller.pid(pos)
                                 self.set_drive_steer(self.steer)
             except KeyboardInterrupt:
@@ -96,13 +97,10 @@ class SwarmRobot:
     def get_autopilot_state(self):
         return self._track_active
 
-    def set_autopilot_state(self, active:bool):
+    def set_autopilot_state(self, active: bool):
         self._track_active = active
-        if(active and self._track_process == None):
+        if active and self._track_process is None:
             self._setup_autopilot()
-
-    def _setup_classifier(self):
-        from .classifier import Classifier
         
     def _setup_navigation(self):
         from time import sleep
@@ -114,8 +112,8 @@ class SwarmRobot:
                         sleep(5)
                         
                     if self._navigation_active:
-                        _,frame = self._camera.read()
-                        if not frame is None:
+                        _, frame = self._camera.read()
+                        if frame is not None:
                             self._navigator.navigate(frame, event)
             except KeyboardInterrupt:
                 self.stop_all()
@@ -125,9 +123,9 @@ class SwarmRobot:
         self._navigation_process = Thread(group=None, target=navigate, daemon=True, args=(self._event,))
         self._navigation_process.start()
     
-    def set_navigaton_state(self, active:bool):
+    def set_navigation_state(self, active: bool):
         self._navigation_active = active
-        if(active and self._navigation_process == None):
+        if active and self._navigation_process is None:
             self._setup_navigation()
             
     def _setup_intersection_detection(self):
@@ -140,8 +138,8 @@ class SwarmRobot:
                         sleep(5)
                         
                     if self._intsecdet_active:
-                        _,frame = self._camera.read()
-                        if not frame is None:
+                        _, frame = self._camera.read()
+                        if frame is not None:
                             self._intersection_detector.detect_intersection(frame)
             except KeyboardInterrupt:
                 self.stop_all()
@@ -151,9 +149,9 @@ class SwarmRobot:
         self._intsecdet_process = Thread(group=None, target=detect_intersection, daemon=True)
         self._intsecdet_process.start()
     
-    def set_intsecdet_state(self, active:bool):
+    def set_intsecdet_state(self, active: bool):
         self._intsecdet_active = active
-        if(active and self._intsecdet_process == None):
+        if active and self._intsecdet_process is None:
             self._setup_intersection_detection()
             
     def set_goal(self, goal):

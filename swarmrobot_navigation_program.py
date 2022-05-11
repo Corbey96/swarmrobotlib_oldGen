@@ -1,16 +1,16 @@
-from swarmrobot import SwarmRobot
+from swarmrobot.swarmrobot import SwarmRobot
 from time import sleep
+
 
 def main():
     bot = SwarmRobot()
     # Calibrate Bot
     bot.calibrate(False, True)
     # Setup automatic Linedetection
-    bot.set_autopilot_state(active = True)
-    #bot._setup_autopilot()
+    bot.set_autopilot_state(active=True)
     # Setup Navigation
-    bot.set_navigaton_state(active = True)
-    #bot._setup_navigation()
+    bot.set_navigation_state(active=True)
+    # Setup Intersectiondetection
     bot.set_intsecdet_state(active=True)
     # Set velocity of Bot
     bot.set_power_lvl(29)
@@ -19,5 +19,5 @@ def main():
     bot.stop_all()
     
 
-if __name__=='__main__':
+if __name__ == '__main__':
     main()

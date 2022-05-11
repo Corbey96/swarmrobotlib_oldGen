@@ -1,5 +1,6 @@
 from brickpi3 import *
 
+
 class Motor:
     _bp = BrickPi3()
     STATUS_POWER = 1
@@ -37,7 +38,7 @@ class Motor:
         self._bp.set_motor_power(self._port, pnew)
 
     def set_power(self, pnew):
-        if 100< abs(pnew):
+        if 100 < abs(pnew):
             return
 
         self._bp.set_motor_power(self._port, pnew)
@@ -47,6 +48,7 @@ class Motor:
         
     def rotate_motor(self, degree):
         self._bp.set_motor_position_relative(self._port, degree)
+
 
 class CalibratedMotor(Motor):
     def __init__(self, port, pmin=None, pmax=None, calpow=20):
@@ -124,14 +126,13 @@ class CalibratedMotor(Motor):
         time.sleep(0.5)
         self.to_init_position()
 
-
     def set_position(self, pnew):
         if (self._pmin and self._pmax) and not (self._pmin <= pnew <= self._pmax):
             raise Exception('position ({} < {} < {}) is invalid for motor {}'.format(self._pmin, pnew, self._pmax, self._port))
         self._bp.set_motor_position(self._port, pnew)
 
     def to_init_position(self):
-        if self._pinit == None:
+        if self._pinit is None:
             raise Exception('initial position for motor {} not known'.format(self._port))
         self.set_position(self._pinit)
 

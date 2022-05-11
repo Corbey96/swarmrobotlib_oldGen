@@ -1,17 +1,14 @@
-from intersectionDetection import IntersectionDetection
-from qrDetection import QrDetection
-from barCodeDetection import BarCodeDetection
+from detection.intersection_detection import IntersectionDetection
+from detection.barcode_detection import BarCodeDetection
 from datetime import datetime
-from turn_assistant import Turn_Assistant
-from parkingSpaceDetection import ParkingSpaceDetection
-
-from scipy.ndimage import gaussian_filter
-from skimage.restoration import denoise_nl_means, estimate_sigma
+from turnassistant import TurnAssistant
+from detection.parkingspace_detection import ParkingSpaceDetection
 
 import cv2 as cv
 import numpy as np
 import time
 import sys
+
 
 class Navigator:
     def __init__(self, width, height, bot, kernel_size=(5,5), preview=False, debug=False):    
@@ -30,23 +27,22 @@ class Navigator:
         self.debug = debug
         
         self.intDetector = IntersectionDetection()
-        self.qrDetector = QrDetection()
         self.barCodeDetector = BarCodeDetection()
         self.parkingDetector = ParkingSpaceDetection()
         
         self.bot = bot
-        self.ta = Turn_Assistant(bot)
-        self._event=""
+        self.ta = TurnAssistant(bot)
+        self._event = ""
         self._detected = False
         
     def navigate(self, image, event):
         if self.preview:
-            cv.imshow('preview',image)
+            cv.imshow('preview', image)
         self._event = event
         # Detect Intersection in image
         intersection = self.bot.intersection
-        # When intersection is detected and wsn't allready detected
-        if len(intersection)>0 and self._detected == False:
+        # When intersection is detected and wasn't already detected
+        if len(intersection) > 0 and self._detected is False:
             # Pause line tracking
             self._event.set()
             self.bot.change_drive_power(0)
@@ -54,28 +50,28 @@ class Navigator:
             # calculate where intersection is
             n = self.intDetector.get_intersection_coordinates(intersection)
             # Sort intersection points and delete the bad ones
-            #intersection.sort(key=lambda y: y[0])
-            #intersection = list(filter(lambda x: x[0][0]>0 and x[0][0]<2000, intersection))
-            if n>=0:
+            # intersection.sort(key=lambda y: y[0])
+            # intersection = list(filter(lambda x: x[0][0]>0 and x[0][0]<2000, intersection))
+            if n >= 0:
                 time.sleep(1)
                 # Get better img while not moving for scanning
                 _, image = self.bot._camera.read()
                 while image is None:
                     _, image = self.bot._camera.read()
                 # Get part of image that contains relevant data
-                qrImg = self.intDetector.get_right_upper_corner_intersection(image, intersection[n])
+                scan_img = self.intDetector.get_right_upper_corner_intersection(image, intersection[n])
                 # make image sharper and colours intenser/brighter
-                kernel = np.array([[-1,-1,-1], [-1,11,-1], [-1,-1,-1]])
-                qrImg = cv.filter2D(qrImg, -1, kernel)
-                qrImg = self.automatic_brightness_and_contrast(qrImg)
+                kernel = np.array([[-1, -1, -1], [-1, 11, -1], [-1, -1, -1]])
+                scan_img = cv.filter2D(scan_img, -1, kernel)
+                scan_img = self.automatic_brightness_and_contrast(scan_img)
 
                 # Show and save image
-                cv.imshow('qrImg',qrImg)
-                date = "/home/pi/qrImg/qrImg_"+datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]+ ".jpg"                   
-                cv.imwrite(date,qrImg)
+                cv.imshow('scan_img', scan_img)
+                date = "/detection/scanimg/scanImg_"+datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] + ".jpg"
+                cv.imwrite(date, scan_img)
                 
                 # When it contains parking space
-                is_parking_space = self.parkingDetector.detect_red_line(qrImg)
+                is_parking_space = self.parkingDetector.detect_red_line(scan_img)
                 if is_parking_space:
                     self._detected = True
                     # Start parking procedure
@@ -83,31 +79,27 @@ class Navigator:
                     sys.exit()
                 else:
                 
-                    lable = ""
+                    label = ""
                     # Detect and read barcode
-                    lable, self._detected = self.barCodeDetector.detect_barcode(qrImg)
-                    print("Lable: ", lable)
+                    label, self._detected = self.barCodeDetector.detect_barcode(scan_img)
+                    print("Label: ", label)
                     if self._detected:
                         # Start turning procedure
-                        self.turn_intersection(self.analyse_barcode(lable))
+                        self.turn_intersection(self.analyse_barcode(label))
                         # Unpause line tracking
                         self._event.clear()
                         self.bot.change_drive_power(self.bot.power_lvl)
                 self._detected = False
-                
-        # If robot waits at intersection, but doesn't see intersection anymore        
-        #elif self._event.isSet() and len(intersection)==0:
-        #    self.bot._drive_motor.rotate_motor(-0.2*self.bot.full_rotation_deg)
             
         if cv.waitKey(1) == ord("d"):
             cv.destroyAllWindows()
             exit()
         
     # 0=Rundkurs, 1=Parkplatz1, 2=Parkplatz2    
-    def analyse_barcode(self, lable):
-        lable = lable.decode()+""
-        directions = list(lable)
-        print('direction:',directions)
+    def analyse_barcode(self, label):
+        label = label.decode() + ""
+        directions = list(label)
+        print('direction:', directions)
         if directions[0] == self.bot.goal:
             return 'l'
         elif directions[1] == self.bot.goal:
@@ -136,14 +128,14 @@ class Navigator:
         gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
     
         # Calculate grayscale histogram
-        hist = cv.calcHist([gray],[0],None,[256],[0,256])
+        hist = cv.calcHist([gray], [0], None, [256], [0, 256])
         hist_size = len(hist)
     
         # Calculate cumulative distribution from the histogram
         accumulator = []
         accumulator.append(float(hist[0]))
         for index in range(1, hist_size):
-            accumulator.append(accumulator[index -1] + float(hist[index]))
+            accumulator.append(accumulator[index - 1] + float(hist[index]))
     
         # Locate points to clip
         maximum = accumulator[-1]
@@ -175,10 +167,3 @@ class Navigator:
 
         auto_result = cv.convertScaleAbs(image, alpha=alpha, beta=beta)
         return auto_result
-        
-        
-        
-        
-        
-        
-        

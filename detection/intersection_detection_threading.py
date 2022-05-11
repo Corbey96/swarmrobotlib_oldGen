@@ -2,7 +2,6 @@ import numpy as np
 import cv2
 from collections import defaultdict
 import sys
-from datetime import datetime
 
 
 class IntersectionDetection:
@@ -61,7 +60,7 @@ class IntersectionDetection:
             segmented[labels[i]].append(line)
 
         segmented = list(segmented.values())
-        #print("Segmented lines into two groups: %d, %d" % (len(segmented[0]), len(segmented[1])))
+        # print("Segmented lines into two groups: %d, %d" % (len(segmented[0]), len(segmented[1])))
 
         return segmented
 

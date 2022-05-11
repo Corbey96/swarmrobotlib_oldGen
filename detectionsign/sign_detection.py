@@ -75,7 +75,7 @@ class SignDetector:
         stop_cascade_classifier = 'classifiers/stop_classifier_01.xml'
         stop_known_distance = 30.0  # cm
         stop_known_width = 4.0  # cm
-        stop_ref_image = cv2.imread("reference_pictures/stop_30_sr14.png")
+        stop_ref_image = cv2.imread("referencepictures/stop_30_sr14.png")
         stop_ref_image_detected = self.detect(stop_ref_image, stop_cascade_classifier)
         stop_ref_sign_width = self.extract_sign_width_in_frame(stop_ref_image_detected)
         stop_focal_length_found = self.focal_length(stop_known_distance,
@@ -90,7 +90,7 @@ class SignDetector:
         no_entry_cascade_classifier = 'classifiers/cascade_no_entry_06.xml'
         no_entry_known_distance = 30.0  # cm
         no_entry_known_width = 4.0  # cm
-        no_entry_ref_image = cv2.imread("reference_pictures/no_entry_30_sr14.png")
+        no_entry_ref_image = cv2.imread("referencepictures/no_entry_30_sr14.png")
         no_entry_ref_image_detected = self.detect(no_entry_ref_image,
                                                   no_entry_cascade_classifier)
         no_entry_ref_sign_width = self.extract_sign_width_in_frame(no_entry_ref_image_detected)
@@ -116,7 +116,6 @@ class SignDetector:
         font = cv2.FONT_HERSHEY_SIMPLEX
         color = (0, 255, 0)  # green
 
-
         signs = []
         # Detect stop sign in image
         for (x, y, w, h) in self.detect(image, self.distance_vars.get("stop_cascade_classifier")):
@@ -129,7 +128,6 @@ class SignDetector:
                 int_distance = int(distance)
                 print("sign detection | distance to stop sign is: " + str(int_distance))
                 signs.append(("sign stop", (x, y, w, h), int_distance))
-            # todo gibt es diesen Fall??
             else:
                 signs.append(("sign stop | distance UNKNOWN", (x, y, w, h), 0))
 
@@ -145,7 +143,6 @@ class SignDetector:
                 int_distance = int(distance)
                 print("no entry detection | distance to no entry sign is: " + str(int_distance))
                 signs.append(("sign no entry", (x, y, w, h), int_distance))
-            # todo gibt es diesen Fall??
             else:
                 signs.append(("sign no entry | distance UNKNOWN", (x, y, w, h), 0))
         if signs:  # not empty?
