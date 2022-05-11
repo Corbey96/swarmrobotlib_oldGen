@@ -157,7 +157,7 @@ class SignDetector:
             endX = int(x + w)
             endY = int(y + h)
             thickness = 2
-            color = (0,255,0)
+            color = (0, 255, 0)
             image = cv2.rectangle(image, (startX, startY), (endX, endY), color, thickness)
             font = cv2.FONT_HERSHEY_SIMPLEX
             fontScale = 0.75

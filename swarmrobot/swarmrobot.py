@@ -3,8 +3,11 @@ from linetracking.pidcontroller import PIDController
 from linetracking.line_tracking import LineTracker
 from navigation.navigation import Navigator
 from detection.intersection_detection_threading import IntersectionDetection
+from detectionsign.sign_detection import SignDetector
+from detectionsign.sign_reaction import SignReactor
 from threading import Thread, Event
 import cv2
+import sys
 
 
 class SwarmRobot:
@@ -41,6 +44,16 @@ class SwarmRobot:
         self._intsecdet_active = False
         self._intersection_detector = IntersectionDetection(self._camera.get(cv2.CAP_PROP_FRAME_WIDTH), self._camera.get(cv2.CAP_PROP_FRAME_HEIGHT), self, preview=True, debug=False)
         self.intersection = []
+
+        # sign detection
+        self._sign_detection_process = None
+        self._sign_detection_active = False
+        self._do_save_detection = False
+        self._show_only = False
+        self._drive_and_show = False
+        self._sign_detector = SignDetector()
+
+        self._sign_reactor = SignReactor(self)
         
     def __del__(self):
         self._steer_motor.to_init_position()
@@ -159,3 +172,65 @@ class SwarmRobot:
         
     def set_power_lvl(self, lvl):
         self.power_lvl = lvl
+
+    def _setup_sign_detection(self):
+        import time
+        from time import sleep
+
+        def detect(event):
+            try:
+                while True:
+                    if not self._sign_detection_active:
+                        sleep(5)
+                    else:
+                        # capture frames from the camera
+                        _, frame = self._camera.read()
+                        if frame is not None:
+                            draw_image = frame.copy()
+                            signs = self._sign_detector.detect_traffic_sign(frame)
+
+                            if self._show_only or self._drive_and_show:
+                                cv2.imshow("frame", draw_image)
+
+                            if signs is not None:
+                                print("Detected traffic signs ", end="")
+                                # show images in camera stream
+                                for sign_name, sign_pos, sign_distance in signs:
+                                    print(sign_name, end="\n")
+                                    draw_image = self._sign_detector.label_image(draw_image, sign_name, sign_pos, sign_distance)
+                                    if self._show_only or self._drive_and_show:
+                                        cv2.imshow("frame", draw_image)
+
+                                if not self._show_only:
+                                    self._sign_reactor.react_to_sign(signs, event)
+
+                            # show video stream - eventually performance little lower cause of that
+                            if self._show_only or self._drive_and_show:
+                                cv2.imshow("frame", draw_image)
+
+                            if self._do_save_detection:
+                                cv2.imwrite("sign_detection_pictures/traffic_sign_detection_" + str(time.time()) + ".jpg", draw_image)
+                        else:
+                            print("------------ no picture ------------")
+
+                        if cv2.waitKey(1) == ord("q"):
+                            print("stopping program...")
+                            self.stop_all()
+                            sys.exit("stop program successfully")
+            except KeyboardInterrupt:
+                print("stopping program...")
+                self.stop_all()
+                sys.exit("stop program successfully")
+            finally:
+                print("stopping program...")
+                self.stop_all()
+                sys.exit("stop program successfully")
+        self._track_process = Thread(group=None, target=detect, daemon=True, args=(self._event,))
+        self._track_process.start()
+
+    def set_sign_detection_state(self, active: bool, show_only: bool, drive_and_show: bool):
+        self._sign_detection_active = active
+        self._show_only = show_only
+        self._drive_and_show = drive_and_show
+        if active and self._sign_detection_process is None:
+            self._setup_sign_detection()
