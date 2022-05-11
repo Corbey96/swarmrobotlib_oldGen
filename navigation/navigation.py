@@ -1,7 +1,7 @@
 from detection.intersection_detection import IntersectionDetection
 from detection.barcode_detection import BarCodeDetection
 from datetime import datetime
-from turnassistant import TurnAssistant
+from navigation.turnassistant import TurnAssistant
 from detection.parkingspace_detection import ParkingSpaceDetection
 
 import cv2 as cv
@@ -11,7 +11,7 @@ import sys
 
 
 class Navigator:
-    def __init__(self, width, height, bot, kernel_size=(5,5), preview=False, debug=False):    
+    def __init__(self, width, height, bot, kernel_size=(5, 5), preview=False, debug=False):
         # Define Region of interest
         self.resolution = (int(width), int(height))
         w = self.resolution[0]//3
