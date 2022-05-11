@@ -48,7 +48,7 @@ class SwarmRobot:
         # sign detection
         self._sign_detection_process = None
         self._sign_detection_active = False
-        self._do_save_detection = False
+        self._do_save_detection = True
         self._show_only = False
         self._drive_and_show = False
         self._sign_detector = SignDetector()
@@ -94,11 +94,15 @@ class SwarmRobot:
                     if self._track_active:
                         _, frame = self._camera.read()
                         if frame is not None:
+                            # show current camara frame
+                            #cv2.imshow('frame | line tracking', frame)
+                            if cv2.waitKey(1) == ord("q"):
+                                break
                             pos = self._line_tracker.track_line(frame, event, self)
                             self.last_line_tracking = pos
                             if pos is not None:
                                 self.steer = self._pid_controller.pid(pos)
-                                self.set_drive_steer(self.steer)
+                                self.set_drive_steer(self.steer) 
             except KeyboardInterrupt:
                 self.stop_all()
             finally:
@@ -198,6 +202,10 @@ class SwarmRobot:
                                 for sign_name, sign_pos, sign_distance in signs:
                                     print(sign_name, end="\n")
                                     draw_image = self._sign_detector.label_image(draw_image, sign_name, sign_pos, sign_distance)
+                                    # save picures of detected signs
+                                    if self._do_save_detection:
+                                        cv2.imwrite("./detectionsign/signdetectionpictures/traffic_sign_detection_"+ sign_name + "_" + str(time.time()) + ".jpg", draw_image)
+                                    # update image
                                     if self._show_only or self._drive_and_show:
                                         cv2.imshow("frame", draw_image)
 
@@ -208,8 +216,7 @@ class SwarmRobot:
                             if self._show_only or self._drive_and_show:
                                 cv2.imshow("frame", draw_image)
 
-                            if self._do_save_detection:
-                                cv2.imwrite("sign_detection_pictures/traffic_sign_detection_" + str(time.time()) + ".jpg", draw_image)
+ 
                         else:
                             print("------------ no picture ------------")
 

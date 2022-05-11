@@ -75,7 +75,7 @@ class SignDetector:
         stop_cascade_classifier = 'classifiers/stop_classifier_01.xml'
         stop_known_distance = 30.0  # cm
         stop_known_width = 4.0  # cm
-        stop_ref_image = cv2.imread("referencepictures/stop_30_sr14.png")
+        stop_ref_image = cv2.imread("detectionsign/referencepictures/stop_30_sr14.png")
         stop_ref_image_detected = self.detect(stop_ref_image, stop_cascade_classifier)
         stop_ref_sign_width = self.extract_sign_width_in_frame(stop_ref_image_detected)
         stop_focal_length_found = self.focal_length(stop_known_distance,
@@ -90,7 +90,7 @@ class SignDetector:
         no_entry_cascade_classifier = 'classifiers/cascade_no_entry_06.xml'
         no_entry_known_distance = 30.0  # cm
         no_entry_known_width = 4.0  # cm
-        no_entry_ref_image = cv2.imread("referencepictures/no_entry_30_sr14.png")
+        no_entry_ref_image = cv2.imread("detectionsign/referencepictures/no_entry_30_sr14.png")
         no_entry_ref_image_detected = self.detect(no_entry_ref_image,
                                                   no_entry_cascade_classifier)
         no_entry_ref_sign_width = self.extract_sign_width_in_frame(no_entry_ref_image_detected)

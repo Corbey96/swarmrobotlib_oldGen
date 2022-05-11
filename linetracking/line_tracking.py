@@ -67,9 +67,9 @@ class LineTracker:
                     
                 # If robot leaves line, set back and try again
                 width_thres = frame.shape[1]/10
-                if cx < width_thres or cx > (frame.shape[1]-width_thres):
-                    self.set_back(bot)
-                    bot.change_drive_power(bot.power_lvl)
+                #if cx < width_thres or cx > (frame.shape[1]-width_thres):
+                #    self.set_back(bot)
+                #    bot.change_drive_power(bot.power_lvl)
                 
                 result = ((cx*2) / frame.shape[1]) -1
 

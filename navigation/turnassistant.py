@@ -26,6 +26,7 @@ class TurnAssistant:
         
     def turn_180_deg(self):
         self._bot.set_drive_steer(1.0)
+        time.sleep(1)
         self._bot._drive_motor.rotate_motor(-1.3*self._full_rotation_deg)
         time.sleep(1)
         self._bot.set_drive_steer(-1.0)

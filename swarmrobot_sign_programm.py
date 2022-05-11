@@ -14,9 +14,9 @@ def main():
     bot.set_sign_detection_state(active=True, show_only=False, drive_and_show=False)
 
     # set velocity of bot
-    bot.change_drive_power(28)
+    bot.change_drive_power(25)
 
-    sleep(55)
+    sleep(11)
     bot.stop_all()
     sys.exit("Erfolgreich beendet!")
 
