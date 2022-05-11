@@ -7,13 +7,15 @@ def main():
     bot.calibrate(False, True)
     # Setup automatic Linedetection
     bot.set_autopilot_state(active = True)
-    bot._setup_autopilot()
+    #bot._setup_autopilot()
     # Setup Navigation
     bot.set_navigaton_state(active = True)
-    bot._setup_navigation()
+    #bot._setup_navigation()
+    bot.set_intsecdet_state(active=True)
     # Set velocity of Bot
-    bot.change_drive_power(23)
-    sleep(100)
+    bot.set_power_lvl(29)
+    bot.change_drive_power(bot.power_lvl)
+    sleep(300)
     bot.stop_all()
     
 

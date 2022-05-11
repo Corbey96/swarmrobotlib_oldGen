@@ -6,4 +6,3 @@ if __name__ == '__main__':
     print('stopping all...')
     SwarmRobot().stop_all()
     print('done...')
- 

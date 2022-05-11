@@ -2,9 +2,27 @@ import numpy as np
 import cv2
 from collections import defaultdict
 import sys
+from datetime import datetime
 
 
 class IntersectionDetection:
+
+    def __init__(self, width, height, bot, kernel_size=(5,5), preview=False, debug=False):
+        # Define Region of interest
+        self.resolution = (int(width), int(height))
+        w = self.resolution[0]//3
+        h = self.resolution[1]//2
+        self.roi_x1 = self.resolution[0]//2 - w//2
+        self.roi_y1 = self.resolution[1] - h
+        self.roi_x2 = self.roi_x1 + w
+        self.roi_y2 = self.roi_y1 + h
+
+        # Constants
+        self.kernel_size = kernel_size
+        self.preview = preview
+        self.debug = debug
+        
+        self._bot = bot
 
     def segment_by_angle_kmeans(self, lines, k=2, **kwargs):
         """
@@ -118,8 +136,6 @@ class IntersectionDetection:
         adapt_type = cv2.ADAPTIVE_THRESH_GAUSSIAN_C
         thresh_type = cv2.THRESH_BINARY_INV
         bin_img = cv2.adaptiveThreshold(blur, 255, adapt_type, thresh_type, 11, 2)
-        #cv2.imshow("binary", bin_img)
-        #cv2.waitKey()
 
         # Detect lines
         rho = 2
@@ -136,18 +152,14 @@ class IntersectionDetection:
         # Find the intersections of each vertical line with each horizontal line
             intersections = self.segmented_intersections(segmented)
 
-        return intersections
+        self._bot.intersection = intersections
+        #print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
     
     def get_right_upper_corner_intersection(self, img, intersection):
         if not img is None:
             height, width, _ = img.shape
             height_crop = int(height / 4)
             width_crop = int(width / 4)
-            #resized = img[height - height_crop:height, width_crop:width - width_crop, :]
-            #print ("A")
-            #print(intersection)
-            #print("B")
-            #print(intersection[0][0]) 
             y = 1 + int(height_crop/3)
             x = 1
             h = intersection[0][0] + (3*height_crop) - 125
