@@ -2,7 +2,7 @@ from motor import CalibratedMotor, Motor
 from pidcontroller import PIDController
 from line_tracking import LineTracker
 from navigation import Navigator
-from intersectionDetection2 import IntersectionDetection
+from intersectionDetectionThreading import IntersectionDetection
 from threading import Thread, Event
 import cv2
 
