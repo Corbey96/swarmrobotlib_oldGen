@@ -48,7 +48,7 @@ class SwarmRobot:
         # sign detection
         self._sign_detection_process = None
         self._sign_detection_active = False
-        self._do_save_detection = True
+        self._do_save_detection = False
         self._show_only = False
         self._drive_and_show = False
         self._sign_detector = SignDetector()
