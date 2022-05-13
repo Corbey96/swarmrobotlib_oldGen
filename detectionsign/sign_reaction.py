@@ -11,7 +11,6 @@ class SignReactor:
 
         # initial time setup to prevent reaction on same sign over and over again
         self.last_stop_time = datetime(2022, 1, 1, 22, 22, 22)
-        self.speed = 28
         self.is_busy = False
 
     def react_to_sign(self, signs, event):
@@ -39,7 +38,7 @@ class SignReactor:
 
                         # reactivate follow_line
                         event.clear()
-                        self.bot.change_drive_power(self.speed)
+                        self.bot.change_drive_power_lvl()
 
                         self.is_busy = False
 
@@ -63,7 +62,7 @@ class SignReactor:
 
                     # reactivate follow_line
                     event.clear()
-                    self.bot.change_drive_power(self.speed)
+                    self.bot.change_drive_power_lvl()
 
                     self.is_busy = False
                 else:

@@ -13,9 +13,10 @@ def main():
     # set velocity of bot
     bot.change_drive_power(28)
 
+    # duration of program in sec
     sleep(10)
     bot.stop_all()
-    sys.exit("Erfolgreich beendet!")
+    sys.exit("finished successfully")
 
 
 if __name__ == '__main__':

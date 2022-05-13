@@ -65,6 +65,12 @@ class SwarmRobot:
     def set_drive_power(self, pnew):
         self._drive_motor.set_power(pnew)
 
+    def set_power_lvl(self, lvl):
+        self.power_lvl = lvl
+
+    def change_drive_power_lvl(self):
+        self._drive_motor.change_power(self.power_lvl)
+
     def set_drive_steer(self, pnew):
         pos = self._steer_motor.position_from_factor(pnew)
         self._steer_motor.set_position(pos)
@@ -173,9 +179,6 @@ class SwarmRobot:
             
     def set_goal(self, goal):
         self.goal = goal
-        
-    def set_power_lvl(self, lvl):
-        self.power_lvl = lvl
 
     def _setup_sign_detection(self):
         import time
