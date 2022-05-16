@@ -72,7 +72,7 @@ class SignDetector:
         """
         distance_vars = {}
         # stop parameter
-        stop_cascade_classifier = 'classifiers/stop_classifier_01.xml'
+        stop_cascade_classifier = 'classifiers/classifier_stop_01.xml'
         stop_known_distance = 30.0  # cm
         stop_known_width = 4.0  # cm
         stop_ref_image = cv2.imread("detectionsign/referencepictures/stop_30_sr14.png")
@@ -87,7 +87,7 @@ class SignDetector:
         distance_vars["stop_focal_length_found"] = stop_focal_length_found
 
         # no entry parameter
-        no_entry_cascade_classifier = 'classifiers/cascade_no_entry_06.xml'
+        no_entry_cascade_classifier = 'classifiers/classifier_no_entry_06.xml'
         no_entry_known_distance = 30.0  # cm
         no_entry_known_width = 4.0  # cm
         no_entry_ref_image = cv2.imread("detectionsign/referencepictures/no_entry_30_sr14.png")
@@ -103,7 +103,6 @@ class SignDetector:
         distance_vars["no_entry_focal_length_found"] = no_entry_focal_length_found
         
         return distance_vars
-        
 
     def detect_traffic_sign(self, image):
         """

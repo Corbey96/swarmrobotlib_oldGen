@@ -11,10 +11,11 @@ def main():
     bot.set_autopilot_state(active=True)
 
     # set velocity of bot
-    bot.change_drive_power(28)
+    bot.set_power_lvl(25)
+    bot.change_drive_power_lvl()
 
     # duration of program in sec
-    sleep(10)
+    sleep(25)
     bot.stop_all()
     sys.exit("finished successfully")
 
