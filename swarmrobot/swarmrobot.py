@@ -5,9 +5,11 @@ from navigation.navigation import Navigator
 from detection.intersection_detection_threading import IntersectionDetection
 from detectionsign.sign_detection import SignDetector
 from detectionsign.sign_reaction import SignReactor
+from utility.camera_updater import Camera_updater
 from threading import Thread, Event
 import cv2
 import sys
+import time
 
 
 class SwarmRobot:
@@ -33,6 +35,7 @@ class SwarmRobot:
         self._track_active = False
         self._pid_controller = PIDController(verbose=False)
         self._line_tracker = LineTracker(self._camera.get(cv2.CAP_PROP_FRAME_WIDTH), self._camera.get(cv2.CAP_PROP_FRAME_HEIGHT), preview=False, debug=False)
+        self.leave_line_reverse = False
 
         # Navigation
         self._navigation_process = None
@@ -54,6 +57,11 @@ class SwarmRobot:
         self._sign_detector = SignDetector()
 
         self._sign_reactor = SignReactor(self)
+        
+        # camera updater
+        self._camera_update_process = None
+        self._camera_update_active = False
+        self._camera_updater = Camera_updater(self)
         
     def __del__(self):
         self._steer_motor.to_init_position()
@@ -98,10 +106,12 @@ class SwarmRobot:
                         sleep(0.5)
 
                     if self._track_active:
+                        frame = None
                         _, frame = self._camera.read()
+                        print('new Frame ', time.time()*1000)
                         if frame is not None:
-                            # show current camara frame
-                            #cv2.imshow('frame | line tracking', frame)
+                            # show current camera frame
+                            cv2.imshow('frame | line tracking', frame)
                             if cv2.waitKey(1) == ord("q"):
                                 break
                             pos = self._line_tracker.track_line(frame, event, self)
@@ -179,6 +189,9 @@ class SwarmRobot:
             
     def set_goal(self, goal):
         self.goal = goal
+        
+    def set_leave_line_reverse(self, state):
+        self.leave_line_reverse = state
 
     def _setup_sign_detection(self):
         import time
@@ -244,3 +257,34 @@ class SwarmRobot:
         self._drive_and_show = drive_and_show
         if active and self._sign_detection_process is None:
             self._setup_sign_detection()
+
+    def _setup_camera_updater(self):
+        from time import sleep
+
+        def camera_update():
+            try:
+                while True:
+                    if not self._camera_update_active:
+                        sleep(0.5)
+
+                    if self._camera_update_active:
+                        frame = None
+                        _, frame = self._camera.read()
+                        if frame is not None:
+                            # show current camera frame
+                            #cv2.imshow('frame | line tracking', frame)
+                            if cv2.waitKey(1) == ord("q"):
+                                break
+                            self._camera_updater.update_camera()
+            except KeyboardInterrupt:
+                self.stop_all()
+            finally:
+                self.stop_all()
+
+        self._camera_update_process = Thread(group=None, target=camera_update, daemon=True)
+        self._camera_update_process.start()
+
+    def set_camera_update_state(self, active: bool):
+        self._camera_update_active = active
+        if active and self._camera_update_process is None:
+            self._setup_camera_updater()

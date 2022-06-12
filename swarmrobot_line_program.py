@@ -9,9 +9,9 @@ def main():
     bot.calibrate(False, True)
     # setup automatic line detection 
     bot.set_autopilot_state(active=True)
-
+    
     # set velocity of bot
-    bot.set_power_lvl(25)
+    bot.set_power_lvl(28)
     bot.change_drive_power_lvl()
 
     # duration of program in sec

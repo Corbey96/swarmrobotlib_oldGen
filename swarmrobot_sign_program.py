@@ -14,11 +14,11 @@ def main():
     bot.set_sign_detection_state(active=True, show_only=False, drive_and_show=False)
 
     # set velocity of bot
-    bot.set_power_lvl(25)
+    bot.set_power_lvl(28)
     bot.change_drive_power_lvl()
 
     # duration of program in sec
-    sleep(11)
+    sleep(100)
     bot.stop_all()
     sys.exit("finished successfully")
 

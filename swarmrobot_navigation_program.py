@@ -8,6 +8,7 @@ def main():
     bot.calibrate(False, True)
     # Setup automatic Linedetection
     bot.set_autopilot_state(active=True)
+    bot.set_leave_line_reverse(True)
     # Setup Navigation
     bot.set_navigation_state(active=True)
     # Setup Intersectiondetection
