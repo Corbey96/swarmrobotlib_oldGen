@@ -59,7 +59,7 @@ class TurnAssistant:
         time.sleep(0.5)
         self._bot.set_drive_steer(1.0)
         time.sleep(0.5)
-        self._bot._drive_motor.rotate_motor(-0.6*self._full_rotation_deg)
+        self._bot._drive_motor.rotate_motor(-0.7*self._full_rotation_deg)
         time.sleep(0.5)
         self._bot.set_drive_steer(-1.0)
         time.sleep(0.5)
@@ -67,7 +67,7 @@ class TurnAssistant:
         time.sleep(0.5)
         self._bot.set_drive_steer(1.0)
         time.sleep(0.5)
-        self._bot._drive_motor.rotate_motor(-0.6*self._full_rotation_deg)
+        self._bot._drive_motor.rotate_motor(-0.7*self._full_rotation_deg)
         self._bot.set_drive_steer(0)
         
     def park_backwards(self):
