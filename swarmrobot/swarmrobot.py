@@ -108,10 +108,9 @@ class SwarmRobot:
                     if self._track_active:
                         frame = None
                         _, frame = self._camera.read()
-                        print('new Frame ', time.time()*1000)
                         if frame is not None:
                             # show current camera frame
-                            cv2.imshow('frame | line tracking', frame)
+                            #cv2.imshow('frame | line tracking', frame)
                             if cv2.waitKey(1) == ord("q"):
                                 break
                             pos = self._line_tracker.track_line(frame, event, self)

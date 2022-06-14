@@ -67,14 +67,9 @@ class LineTracker:
                     
                 # If robot leaves line, set back and try again
                 width_thres = frame.shape[1]/10
-                print('dimensionsY:', frame.shape[0])
-                print('dimensionsX:', frame.shape[1])
                 if bot.leave_line_reverse:
-                    print('cx:',cx)
-                    print('cy:',cy)
                     if cx < width_thres or cx > (frame.shape[1]-width_thres):
                         self.set_back(bot)
-                        print('reversing')
                         bot.change_drive_power(bot.power_lvl)
                 
                 result = ((cx*2) / frame.shape[1]) -1
@@ -91,7 +86,3 @@ class LineTracker:
         bot._drive_motor.rotate_motor(-1*510)
         time.sleep(0.5)
         bot.set_drive_steer(bot.steer)
-        
-        _, image = bot._camera.read()
-        while image is None:
-            _, image = bot._camera.read()
