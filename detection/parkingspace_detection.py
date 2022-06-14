@@ -22,16 +22,3 @@ class ParkingSpaceDetection:
             return True
         
         return False
-    
-    def detect_red_line2(self, img):
-        result = img.copy()
-        image = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-        lower = np.array([155,25,0])
-        upper = np.array([179,255,255])
-        mask = cv2.inRange(image, lower, upper)
-        result = cv2.bitwise_and(result, result, mask=mask)
-        print(result)
-        if len(result)>0:
-            return True
-        
-        return False

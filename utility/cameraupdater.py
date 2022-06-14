@@ -1,6 +1,6 @@
-import cv2 as cv
 
-class Camera_updater:  
+
+class CameraUpdater:
     def __init__(self, bot, preview=False, debug=False):
         self._bot = bot
         

@@ -49,9 +49,6 @@ class Navigator:
             
             # calculate where intersection is
             n = self.intDetector.get_intersection_coordinates(intersection)
-            # Sort intersection points and delete the bad ones
-            # intersection.sort(key=lambda y: y[0])
-            # intersection = list(filter(lambda x: x[0][0]>0 and x[0][0]<2000, intersection))
             if n >= 0:
                 time.sleep(1)
                 # Get better img while not moving for scanning

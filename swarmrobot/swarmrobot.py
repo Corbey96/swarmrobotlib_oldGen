@@ -5,11 +5,10 @@ from navigation.navigation import Navigator
 from detection.intersection_detection_threading import IntersectionDetection
 from detectionsign.sign_detection import SignDetector
 from detectionsign.sign_reaction import SignReactor
-from utility.camera_updater import Camera_updater
+from utility.cameraupdater import CameraUpdater
 from threading import Thread, Event
 import cv2
 import sys
-import time
 
 
 class SwarmRobot:
@@ -61,7 +60,7 @@ class SwarmRobot:
         # camera updater
         self._camera_update_process = None
         self._camera_update_active = False
-        self._camera_updater = Camera_updater(self)
+        self._camera_updater = CameraUpdater(self)
         
     def __del__(self):
         self._steer_motor.to_init_position()

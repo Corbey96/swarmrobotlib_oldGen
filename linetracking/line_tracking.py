@@ -18,7 +18,6 @@ class LineTracker:
         self.kernel_size = kernel_size
         self.preview = preview
         self.debug = debug
-        
 
     def track_line(self, frame, event, bot):
         if not event.isSet():
@@ -32,13 +31,12 @@ class LineTracker:
             if self.debug:
                 cv.imshow('Gray', gray)
 
-            # Gausian blur
+            # Gaussian blur
             blur = cv.GaussianBlur(gray, self.kernel_size, 0)
             if self.debug:
                 cv.imshow('Blur', blur)
 
             # Color thresholding
-            # thresh = cv.adaptiveThreshold(blur ,255,cv.ADAPTIVE_THRESH_MEAN_C, cv.THRESH_BINARY_INV,11,2)
             rel, thresh = cv.threshold(blur, 60, 255, cv.THRESH_BINARY_INV)
             if self.debug:
                 cv.imshow('Thresh', thresh)
@@ -72,7 +70,7 @@ class LineTracker:
                         self.set_back(bot)
                         bot.change_drive_power(bot.power_lvl)
                 
-                result = ((cx*2) / frame.shape[1]) -1
+                result = ((cx*2) / frame.shape[1]) - 1
 
                 return result
             

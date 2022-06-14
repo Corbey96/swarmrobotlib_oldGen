@@ -99,24 +99,7 @@ class IntersectionDetection:
 
         return intersections
 
-    # def drawLines(img, lines, color=(0, 0, 255)):
-    #     """
-    #     Draw lines on an image
-    #     """
-    #     for line in lines:
-    #         for rho, theta in line:
-    #             a = np.cos(theta)
-    #             b = np.sin(theta)
-    #             x0 = a * rho
-    #             y0 = b * rho
-    #             x1 = int(x0 + 1000 * (-b))
-    #             y1 = int(y0 + 1000 * (a))
-    #             x2 = int(x0 - 1000 * (-b))
-    #             y2 = int(y0 - 1000 * (a))
-    #             cv2.line(img, (x1, y1), (x2, y2), color, 1)
-
     def detect_intersection(self, img):
-
         height, width, _ = img.shape
         height_crop = int(height / 4)
         width_crop = int(width / 4)
@@ -142,17 +125,15 @@ class IntersectionDetection:
         thresh = 350
         lines = cv2.HoughLines(bin_img, rho, theta, thresh)
 
-        #print("Found lines: %d" % (len(lines)))
         intersections = []
         if lines is not None:
-        # Cluster line angles into 2 groups (vertical and horizontal)
+            # Cluster line angles into 2 groups (vertical and horizontal)
             segmented = self.segment_by_angle_kmeans(lines, 2)
 
-        # Find the intersections of each vertical line with each horizontal line
+            # Find the intersections of each vertical line with each horizontal line
             intersections = self.segmented_intersections(segmented)
 
         self._bot.intersection = intersections
-        #print(datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
     
     def get_right_upper_corner_intersection(self, img, intersection):
         if not img is None:
@@ -167,33 +148,9 @@ class IntersectionDetection:
             return crop_img
     
     def get_intersection_coordinates(self, intersection):
-        n=0
+        n = 0
         for val in intersection:
             if((intersection[0][0][0]+2)>0 and (intersection[0][0][1]+2)>0):
                 return n
-            n=n+1
+            n = n+1
         return -1
-
-    # img_with_segmented_lines = np.copy(img)
-    #
-    # # Draw vertical lines in green
-    # vertical_lines = segmented[1]
-    # img_with_vertical_lines = np.copy(img)
-    # drawLines(img_with_segmented_lines, vertical_lines, (0, 255, 0))
-    #
-    # # Draw horizontal lines in yellow
-    # horizontal_lines = segmented[0]
-    # img_with_horizontal_lines = np.copy(img)
-    # drawLines(img_with_segmented_lines, horizontal_lines, (0, 255, 255))
-    #
-    # # Draw intersection points in magenta
-    # for point in intersections:
-    #     pt = (point[0][0], point[0][1])
-    #     length = 5
-    #     cv2.line(img_with_segmented_lines, (pt[0], pt[1] - length), (pt[0], pt[1] + length), (255, 0, 255),
-    #              1)  # vertical line
-    #     cv2.line(img_with_segmented_lines, (pt[0] - length, pt[1]), (pt[0] + length, pt[1]), (255, 0, 255), 1)
-    #
-    # cv2.imshow("Segmented lines", img_with_segmented_lines)
-    # cv2.waitKey()
-    # cv2.imwrite("intersection_points.jpg", img_with_segmented_lines)
